@@ -1,0 +1,52 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: chatbot-rag
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://dpg-d6r5h8a4d50c73bnf2q0-a.oregon-postgres.render.com:5432/ragdb_svc8}
+    username: ${SPRING_DATASOURCE_USERNAME:santhosh}
+    password: ${SPRING_DATASOURCE_PASSWORD:LBOIWx2A1mjrJz29APHJuimhUIrq77u2}
+  ai:
+    model:
+      chat: bedrock-converse
+      embedding: bedrock-titan
+    bedrock:
+      aws:
+        region: ${AWS_REGION:us-east-1}
+        access-key: ${AWS_ACCESS_KEY_ID:}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:}
+        session-token: ${AWS_SESSION_TOKEN:}
+      converse:
+        chat:
+          options:
+            model: ${BEDROCK_CHAT_MODEL:us.anthropic.claude-sonnet-4-5-20250929-v1:0}
+            temperature: ${BEDROCK_CHAT_TEMPERATURE:0.2}
+            max-tokens: ${BEDROCK_CHAT_MAX_TOKENS:800}
+      titan:
+        embedding:
+          model: ${BEDROCK_EMBEDDING_MODEL:amazon.titan-embed-text-v2:0}
+          input-type: ${BEDROCK_EMBEDDING_INPUT_TYPE:TEXT}
+    vectorstore:
+      pgvector:
+        dimensions: 1024
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        initialize-schema: true
+        max-document-batch-size: 1000
+
+logging:
+  level:
+    org.springframework.ai: INFO
+
+app:
+  admin:
+    token: ${APP_ADMIN_TOKEN:santhosh}
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  persona:
+    enabled: ${PERSONA_ENABLED:true}
+    name: ${PERSONA_NAME:Santhosh}
+    tone: ${PERSONA_TONE:friendly, practical, concise}
+    details: ${PERSONA_DETAILS:I am Santhosh.}

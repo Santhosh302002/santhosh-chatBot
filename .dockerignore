@@ -1,0 +1,11 @@
+.git
+.gitignore
+.idea
+.vscode
+
+frontend
+
+README.md
+docker-compose.yml
+
+target

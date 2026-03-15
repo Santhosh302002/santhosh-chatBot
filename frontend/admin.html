@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santhosh Chat - Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="brand">Admin KB Upload</div>
+      <p class="sidebar-copy">Only for ingestion. Password is requested in a popup and sent as <code>X-Admin-Token</code>.</p>
+
+      <hr />
+
+      <label for="docId">Document ID</label>
+      <input id="docId" type="text" placeholder="policy-001" />
+
+      <label for="docTitle">Title</label>
+      <input id="docTitle" type="text" placeholder="Refund Policy" />
+
+      <label for="docText">Text</label>
+      <textarea id="docText" rows="8" placeholder="Paste document text..."></textarea>
+
+      <button id="ingestBtn" type="button">Upload to KB</button>
+      <button id="changePasswordBtn" class="secondary" type="button">Change Password</button>
+      <button id="themeToggleBtn" class="secondary theme-toggle" type="button">Dark Mode</button>
+      <p id="ingestStatus" class="status-line"></p>
+      <a class="nav-link" href="/">Back to User Chat</a>
+    </aside>
+
+    <section class="workspace">
+      <header class="workspace-header">
+        <h1>Admin Activity</h1>
+        <div class="status-chip" id="connectionPill">API Proxy Ready</div>
+      </header>
+      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <template id="messageTemplate">
+    <article class="msg">
+      <div class="msg-role"></div>
+      <div class="msg-body"></div>
+    </article>
+  </template>
+
+  <dialog id="adminAuthDialog" class="auth-dialog">
+    <form id="adminAuthForm" class="auth-card">
+      <h2>Admin Password</h2>
+      <p>Enter the admin password to upload documents.</p>
+      <input id="adminPasswordInput" type="password" placeholder="APP_ADMIN_TOKEN" autocomplete="current-password" />
+      <p id="authError" class="status-line error"></p>
+      <div class="auth-actions">
+        <button type="submit">Unlock</button>
+        <button id="adminPasswordCancel" class="secondary" type="button">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./admin.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santhosh Chat - User</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="brand">Santhosh Chat</div>
+      <p class="sidebar-copy">User chat portal connected through Vercel rewrite proxy.</p>
+      <a class="nav-link" href="/admin">Open Admin Upload</a>
+      <div class="status-chip" id="connectionPill">API Proxy Ready</div>
+      <button id="themeToggleBtn" class="secondary theme-toggle" type="button">Dark Mode</button>
+    </aside>
+
+    <section class="workspace">
+      <header class="workspace-header">
+        <h1>Ask Your Knowledge Base</h1>
+      </header>
+
+      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+      <form id="chatForm" class="composer">
+        <input id="questionInput" type="text" placeholder="Message Santhosh Chat" autocomplete="off" required />
+        <button id="sendBtn" type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <template id="messageTemplate">
+    <article class="msg">
+      <div class="msg-role"></div>
+      <div class="msg-body"></div>
+    </article>
+  </template>
+
+  <script src="./user.js" defer></script>
+</body>
+</html>
