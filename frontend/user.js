@@ -36,12 +36,20 @@ function setConnectionStatus(text) {
 }
 
 function appendMessage(role, text, sources = []) {
+  if (role !== "welcome") {
+    const welcomeNode = elements.chatMessages.querySelector(".msg.welcome");
+    if (welcomeNode) {
+      welcomeNode.remove();
+    }
+  }
+
   const node = elements.messageTemplate.content.firstElementChild.cloneNode(true);
   const roleNode = node.querySelector(".msg-role");
   const bodyNode = node.querySelector(".msg-body");
 
   node.classList.add(role);
-  roleNode.textContent = role === "user" ? "You" : role === "bot" ? "Assistant" : "Error";
+  roleNode.textContent =
+    role === "user" ? "You" : role === "bot" ? "Assistant" : role === "welcome" ? "" : "Error";
   bodyNode.textContent = text;
 
   if (role === "bot" && sources.length > 0) {
@@ -74,7 +82,7 @@ function init() {
   loadTheme();
   elements.themeToggleBtn.addEventListener("click", toggleTheme);
   setConnectionStatus("API Proxy Ready");
-  appendMessage("bot", "Ask anything about your uploaded knowledge base.");
+  appendMessage("welcome", "Chat with Santhosh");
 
   elements.chatForm.addEventListener("submit", async (event) => {
     event.preventDefault();

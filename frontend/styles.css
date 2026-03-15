@@ -54,15 +54,18 @@ body {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 300px 1fr;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 .sidebar {
   background: var(--sidebar);
   border-right: 1px solid var(--line);
-  padding: 24px 18px;
+  padding: 26px 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 .brand {
@@ -104,6 +107,12 @@ textarea {
   color: var(--text);
 }
 
+input:focus,
+textarea:focus {
+  outline: 2px solid rgba(108, 143, 216, 0.45);
+  outline-offset: 1px;
+}
+
 textarea {
   resize: vertical;
 }
@@ -118,10 +127,17 @@ button {
   cursor: pointer;
   background: var(--accent);
   color: #fff;
+  transition: transform 120ms ease, box-shadow 150ms ease, background 150ms ease;
 }
 
 button:hover {
   background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 button.secondary {
@@ -157,12 +173,17 @@ hr {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  backdrop-filter: blur(4px);
 }
 
 .workspace-header h1 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
+}
+
+.workspace-header h1:empty {
+  display: none;
 }
 
 .status-chip {
@@ -178,7 +199,7 @@ hr {
 .chat-messages {
   flex: 1;
   overflow: auto;
-  padding: 22px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -190,6 +211,7 @@ hr {
   border-radius: 12px;
   padding: 12px 14px;
   animation: in 180ms ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
 .msg.bot {
@@ -206,6 +228,24 @@ hr {
   background: var(--error);
   border-color: #f8b4b4;
   align-self: flex-start;
+}
+
+.msg.welcome {
+  align-self: center;
+  margin: auto;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
+}
+
+.msg.welcome .msg-role {
+  display: none;
 }
 
 .msg-role {
@@ -235,6 +275,7 @@ hr {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.06);
 }
 
 .composer input {
@@ -269,7 +310,8 @@ hr {
   }
 
   .chat-messages {
-    min-height: 50vh;
+    min-height: 54vh;
+    padding: 18px;
   }
 }
 
