@@ -4,6 +4,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://chatbot-app-2u9i.onrender.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
