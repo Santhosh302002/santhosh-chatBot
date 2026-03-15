@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.chatbot.service.dto.ChatRequest;
 import org.example.chatbot.service.dto.ChatResponse;
 import org.example.chatbot.service.dto.IngestRequest;
@@ -18,6 +19,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class RagService {
 
@@ -58,12 +60,14 @@ public class RagService {
         }
 
         List<Document> documents = createDocuments(request, chunks);
+        log.info("Ingesting document '{}' with id '{}', split into {} chunks", request.title(), request.documentId(), documents.size());
         vectorStore.add(documents);
         return new IngestResponse(request.documentId(), documents.size());
     }
 
     public ChatResponse answer(ChatRequest request) {
         int topK = request.topK() == null ? 4 : request.topK();
+        log.info("Received question: '{}', retrieving top {} relevant chunks from vector store", request.question(), topK);
         List<Document> matches = vectorStore.similaritySearch(SearchRequest.builder()
                 .query(request.question())
                 .topK(topK)
@@ -73,6 +77,7 @@ public class RagService {
                 ? "No relevant context was found in the vector database."
                 : formatContext(matches);
 
+        log.info("Formatted context for LLM:\n{}", context);
         String answer = chatClient.prompt()
                 .system(buildSystemPrompt())
                 .user(user -> user.text(USER_PROMPT)
