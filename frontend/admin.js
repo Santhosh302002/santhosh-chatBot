@@ -1,6 +1,8 @@
 const ADMIN_TOKEN_SESSION_KEY = "santhosh-chat-admin-token";
 const THEME_STORAGE_KEY = "santhosh-chat-theme";
 let authPromise = null;
+const RENDER_WAKEUP_MESSAGE =
+  "I'm waking up on Render... stretching servers and brewing coffee ☕. Give me 30-60 seconds, then try again.";
 
 const elements = {
   ingestBtn: document.getElementById("ingestBtn"),
@@ -19,6 +21,28 @@ const elements = {
   adminPasswordCancel: document.getElementById("adminPasswordCancel"),
   authError: document.getElementById("authError")
 };
+
+function isLikelyRenderWakeup(status, details = "") {
+  const text = String(details || "").toLowerCase();
+  return (
+    status === 502 ||
+    status === 503 ||
+    status === 504 ||
+    text.includes("failed to fetch") ||
+    text.includes("networkerror") ||
+    text.includes("bad gateway") ||
+    text.includes("service unavailable") ||
+    text.includes("gateway timeout") ||
+    text.includes("upstream request timeout")
+  );
+}
+
+function buildRequestError(status, details, fallbackMessage) {
+  if (isLikelyRenderWakeup(status, details)) {
+    return new Error(RENDER_WAKEUP_MESSAGE);
+  }
+  return new Error(details || fallbackMessage);
+}
 
 function applyTheme(theme) {
   document.body.setAttribute("data-theme", theme);
@@ -153,21 +177,26 @@ async function ingestDocument(payload) {
     throw new Error("Admin password is required");
   }
 
-  const response = await fetch("/api/documents", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Admin-Token": adminToken
-    },
-    body: JSON.stringify(payload)
-  });
+  let response;
+  try {
+    response = await fetch("/api/documents", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Admin-Token": adminToken
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    throw buildRequestError(0, error?.message, "Ingest failed");
+  }
 
   if (!response.ok) {
     const text = await response.text();
     if (response.status === 401 || response.status === 403) {
       clearAdminToken();
     }
-    throw new Error(text || `Ingest failed (${response.status})`);
+    throw buildRequestError(response.status, text, `Ingest failed (${response.status})`);
   }
 
   return response.json();

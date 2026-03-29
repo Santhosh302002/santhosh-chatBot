@@ -1,4 +1,6 @@
 const STORAGE_KEY = "santhosh-chat-config";
+const RENDER_WAKEUP_MESSAGE =
+  "I'm waking up on Render... stretching servers and brewing coffee ☕. Give me 30-60 seconds, then try again.";
 
 const elements = {
   apiBaseUrl: document.getElementById("apiBaseUrl"),
@@ -16,6 +18,28 @@ const elements = {
   connectionPill: document.getElementById("connectionPill"),
   messageTemplate: document.getElementById("messageTemplate")
 };
+
+function isLikelyRenderWakeup(status, details = "") {
+  const text = String(details || "").toLowerCase();
+  return (
+    status === 502 ||
+    status === 503 ||
+    status === 504 ||
+    text.includes("failed to fetch") ||
+    text.includes("networkerror") ||
+    text.includes("bad gateway") ||
+    text.includes("service unavailable") ||
+    text.includes("gateway timeout") ||
+    text.includes("upstream request timeout")
+  );
+}
+
+function buildRequestError(status, details, fallbackMessage) {
+  if (isLikelyRenderWakeup(status, details)) {
+    return new Error(RENDER_WAKEUP_MESSAGE);
+  }
+  return new Error(details || fallbackMessage);
+}
 
 function defaultApiBase() {
   return window.location.origin;
@@ -101,15 +125,20 @@ async function sendChat(question) {
     throw new Error("Backend URL is required");
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question, topK })
-  });
+  let response;
+  try {
+    response = await fetch(`${apiBaseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, topK })
+    });
+  } catch (error) {
+    throw buildRequestError(0, error?.message, "Chat request failed");
+  }
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `Chat request failed (${response.status})`);
+    throw buildRequestError(response.status, text, `Chat request failed (${response.status})`);
   }
 
   return response.json();
@@ -121,15 +150,20 @@ async function ingestDocument(payload) {
     throw new Error("Backend URL is required");
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/documents`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+  let response;
+  try {
+    response = await fetch(`${apiBaseUrl}/api/documents`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    throw buildRequestError(0, error?.message, "Ingest failed");
+  }
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `Ingest failed (${response.status})`);
+    throw buildRequestError(response.status, text, `Ingest failed (${response.status})`);
   }
 
   return response.json();
