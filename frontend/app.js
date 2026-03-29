@@ -182,7 +182,7 @@ function init() {
 
   appendMessage(
     "bot",
-    "Hi, I am ready. Ask a question, or ingest a document from the left panel first."
+    "I’m waking up on Render... stretching servers and brewing coffee ☕. First response can take 30-60 seconds."
   );
 
   elements.saveConfigBtn.addEventListener("click", () => {

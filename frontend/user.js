@@ -112,7 +112,7 @@ function init() {
   loadTheme();
   elements.themeToggleBtn.addEventListener("click", toggleTheme);
   setConnectionStatus("API Proxy Ready");
-  appendMessage("welcome", "Chat with Santhosh");
+  appendMessage("welcome", "I’m waking up on Render... stretching servers and brewing coffee ☕");
 
   elements.chatForm.addEventListener("submit", async (event) => {
     event.preventDefault();

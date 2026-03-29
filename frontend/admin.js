@@ -212,7 +212,10 @@ function init() {
   elements.themeToggleBtn.addEventListener("click", toggleTheme);
   setConnectionStatus("API via Vercel rewrite");
 
-  appendMessage("bot", "Admin portal ready. Enter password in popup to upload.");
+  appendMessage(
+    "bot",
+    "I’m waking up on Render... stretching servers and brewing coffee ☕. First upload can take 30-60 seconds."
+  );
 
   ensureAdminToken().then((token) => {
     if (token) {
