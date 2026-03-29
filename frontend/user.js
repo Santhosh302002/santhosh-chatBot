@@ -11,7 +11,8 @@ const elements = {
 };
 
 const RENDER_WAKEUP_MESSAGE =
-  "I'm waking up on Render... stretching servers and brewing coffee ☕. Give me 30-60 seconds";
+  "I'm waking up on Render... stretching servers and brewing coffee ☕. Give me 30-60 seconds, then try again.";
+let hasShownFirstUserWakeupReply = false;
 
 function isLikelyRenderWakeup(status, details = "") {
   const text = String(details || "").toLowerCase();
@@ -112,7 +113,7 @@ function init() {
   loadTheme();
   elements.themeToggleBtn.addEventListener("click", toggleTheme);
   setConnectionStatus("API Proxy Ready");
-  appendMessage("welcome", "I’m waking up on Render... stretching servers and brewing coffee ☕");
+  appendMessage("welcome", "Chat with Santhosh");
 
   elements.chatForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -124,6 +125,14 @@ function init() {
     appendMessage("user", question);
     elements.questionInput.value = "";
     elements.sendBtn.disabled = true;
+
+    if (!hasShownFirstUserWakeupReply) {
+      hasShownFirstUserWakeupReply = true;
+      appendMessage("bot", RENDER_WAKEUP_MESSAGE);
+      elements.sendBtn.disabled = false;
+      elements.questionInput.focus();
+      return;
+    }
 
     try {
       const result = await sendChat(question);

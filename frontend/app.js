@@ -1,6 +1,7 @@
 const STORAGE_KEY = "santhosh-chat-config";
 const RENDER_WAKEUP_MESSAGE =
   "I'm waking up on Render... stretching servers and brewing coffee ☕. Give me 30-60 seconds, then try again.";
+let hasShownFirstUserWakeupReply = false;
 
 const elements = {
   apiBaseUrl: document.getElementById("apiBaseUrl"),
@@ -182,7 +183,7 @@ function init() {
 
   appendMessage(
     "bot",
-    "I’m waking up on Render... stretching servers and brewing coffee ☕. First response can take 30-60 seconds."
+    "Hi, I am ready. Ask a question, or ingest a document from the left panel first."
   );
 
   elements.saveConfigBtn.addEventListener("click", () => {
@@ -200,6 +201,14 @@ function init() {
     appendMessage("user", question);
     elements.questionInput.value = "";
     elements.sendBtn.disabled = true;
+
+    if (!hasShownFirstUserWakeupReply) {
+      hasShownFirstUserWakeupReply = true;
+      appendMessage("bot", RENDER_WAKEUP_MESSAGE);
+      elements.sendBtn.disabled = false;
+      elements.questionInput.focus();
+      return;
+    }
 
     try {
       const result = await sendChat(question);
